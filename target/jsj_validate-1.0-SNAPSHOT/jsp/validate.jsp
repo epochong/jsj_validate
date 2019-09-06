@@ -19,7 +19,7 @@
         int width = 60, height = 20;
         BufferedImage image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        g.setColor(new Color(200,200,200));
+        g.setColor(new Color(255,200,255));
         g.fillRect(0,0,width,height);
         Random random = new Random();
         int randNum = random.nextInt(8999) + 1000;

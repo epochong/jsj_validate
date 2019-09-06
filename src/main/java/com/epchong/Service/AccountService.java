@@ -20,4 +20,11 @@ public class AccountService {
         }
         return true;
     }
+
+    public boolean register(String userName, String password) {
+        User user = new User();
+        user.setPassword(password);
+        user.setUserName(userName);
+        return accountDao.register(user);
+    }
 }

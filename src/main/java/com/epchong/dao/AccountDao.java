@@ -2,6 +2,7 @@ package com.epchong.dao;
 
 import com.epchong.po.User;
 import com.epchong.utils.JdbcUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,26 @@ import java.sql.SQLException;
  * @describe
  */
 public class AccountDao {
+    public boolean register(User user) {
+        String userName = user.getUserName();
+        String password = user.getPassword();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        connection = JdbcUtils.getConnection();
+        String sql = "insert into user(userName,password) values(?,?)";
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1,userName);
+            statement.setString(2,DigestUtils.md5Hex(password));
+            int res = statement.executeUpdate();
+            if (res == 1) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public User userLogin(String userName,String password) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -27,17 +48,18 @@ public class AccountDao {
             assert connection != null;
             statement = connection.prepareStatement(sql);
             statement.setString(1,userName);
-            statement.setString(2,password);
+            statement.setString(2,DigestUtils.md5Hex(password));
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 user = getUser(resultSet);
+                return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             JdbcUtils.close(connection,statement,resultSet);
         }
-        return user;
+        return null;
     }
     public static User getUser(ResultSet resultSet) throws SQLException {
         User user = new User();
